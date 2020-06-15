@@ -11,8 +11,20 @@ CONFIG(debug, debug|release){
 }
 
 SOURCES += \
+        background.cpp \
+        ball.cpp \
+        block.cpp \
         functions.cpp \
-        main.cpp
+        game.cpp \
+        main.cpp \
+        object.cpp \
+        player.cpp
 
 HEADERS += \
-    class.h
+    background.h \
+    ball.h \
+    block.h \
+    class.h \
+    game.h \
+    object.h \
+    player.h
