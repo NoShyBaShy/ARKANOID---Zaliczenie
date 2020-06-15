@@ -1,5 +1,5 @@
-#ifndef ENTITY_H
-#define ENTITY_H
+#ifndef OBJECT_H
+#define OBJECT_H
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
@@ -27,4 +27,4 @@ public:
     void draw(sf::RenderTarget &render_target);
 };
 
-#endif // ENTITY_H
+#endif // OBJECT_H
