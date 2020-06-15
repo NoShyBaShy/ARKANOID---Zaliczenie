@@ -5,8 +5,9 @@
 class Ball : public Object
 {
 private:
+    bool is_release;
     sf::Vector2f velocity;
-    float speed=200;
+    float speed;
 public:
     Ball(const sf::Texture &texture);
 

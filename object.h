@@ -11,8 +11,8 @@ class Object
 {
 protected:
     sf::Sprite sprite;
-
     bool destroy;
+
 public:
     Object(const sf::Texture &texture);
     virtual ~Object() = default;
@@ -25,6 +25,8 @@ public:
     virtual void update(const float &elapsed)=0;
     void del();
     void draw(sf::RenderTarget &render_target);
+    bool getDestroyed();
+    bool is_destroyed();
 };
 
 #endif // OBJECT_H

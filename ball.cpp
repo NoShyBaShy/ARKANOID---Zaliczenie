@@ -1,13 +1,18 @@
 #include "ball.h"
 
 Ball::Ball(const sf::Texture &texture) : Object(texture){
-    this->sprite.setTextureRect(sf::IntRect(0,40,5,4));
+    this->is_release=true;
+    this->speed=300;
+    this->sprite.setTextureRect(sf::IntRect(0,40,4,4));
     this->sprite.setScale(2,2);
-    this->velocity = {200,-200};
-    this->setPosition(400,250);
+    this->velocity = {0,200};
+    this->setPosition(640,590);
 }
 
 void Ball::update(const float &elapsed){
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
+        this->is_release = false;
+    }
     //screencollision
     if(this->getPosition().x < 80){
         this->setPosition(80,this->getPosition().y);
@@ -24,21 +29,29 @@ void Ball::update(const float &elapsed){
 }
 
 void Ball::animate(const float &elapsed){
-    this->sprite.move(velocity*elapsed);
-//    sf::Vector2f velocity;
-//    if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
-//        velocity.x = -speed*elapsed;
-//    }
-//    if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
-//        velocity.x = speed*elapsed;
-//    }
-//    if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
-//        velocity.y = speed*elapsed;
-//    }
-//    if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
-//        velocity.y = -speed*elapsed;
-//    }
-//    this->sprite.move(velocity);
+    if(this->is_release==true){
+        sf::Vector2f vel;
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
+            vel.x = -speed*elapsed;
+            this->velocity.x = -speed+100;
+        }
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
+            vel.x = speed*elapsed;
+            this->velocity.x = speed-100;
+        }
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
+            vel.y = speed*elapsed;
+        }
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
+            vel.y = -speed*elapsed;
+        }
+
+        this->sprite.move(vel);
+
+    }else{
+        this->sprite.move(velocity*elapsed);
+    }
+
 }
 
 sf::Vector2f Ball::getVelocity(){

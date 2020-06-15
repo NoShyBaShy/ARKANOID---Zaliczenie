@@ -22,12 +22,16 @@ private:
     sf::Texture texture;
     std::vector<sf::Texture> Texture;
 
+    int blocks_created;
+
     void update();
     void draw();
     void collision(std::vector<Object*> &objects);
+    bool destroy();
+    void loadTextures();
 
     void lvl_1();
-
+    bool lvl_1_complete();
 
 public:
     Game();

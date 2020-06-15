@@ -4,7 +4,7 @@ Player::Player(const sf::Texture &texture,const sf::Vector2f &position) : Object
     this->HP=1;
     this->speed = 300;
     this->sprite.setPosition(position);
-    this->sprite.setScale(5,3);
+    this->sprite.setScale(4,3);
 }
 
 void Player::update(const float &elapsed){

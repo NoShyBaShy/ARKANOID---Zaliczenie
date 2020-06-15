@@ -3,38 +3,7 @@
 Game::Game(){
     this->window.create(sf::VideoMode(1280,720), "Arkanoid");
     this->window.setFramerateLimit(120);
-    //tekstury
-
-        //background
-    if(!texture.loadFromFile("Textures\\Backgrounds.png")){
-        throw("Could not load textures");
-    }
-
-    this->texture.setRepeated(true);
-    this->Texture.emplace_back(texture);
-    this->texture.setRepeated(false);
-
-        //player
-    if(!texture.loadFromFile("Textures\\platform_normal.png")){
-        throw("Could not load textures");
-    }
-    this->Texture.emplace_back(texture);
-
-        //blocks
-    if(!texture.loadFromFile("Textures\\Block_red.png")){
-        throw("Could not load textures");
-    }
-    this->Texture.emplace_back(texture);
-
-    if(!texture.loadFromFile("Textures\\Block_yellow.png")){
-        throw("Could not load textures");
-    }
-    this->Texture.emplace_back(texture);
-
-    if(!texture.loadFromFile("Textures\\Block_blue.png")){
-        throw("Could not load textures");
-    }
-    this->Texture.emplace_back(texture);
+    this->loadTextures();
     this->lvl_1();
 }
 void Game::update(){
@@ -49,14 +18,14 @@ void Game::update(){
         objects[i]->update(elapsed);
         objects[i]->animate(elapsed);
         this->collision(objects);
-//        if(dynamic_cast<Player*>(objects[i])){
-//            if(player->smallSize()==true){
-//                sf::Vector2f new_pos = player->getPosition();
-//                this->player->del();
-//                objects.erase(objects.begin()+i);
-//                objects.emplace_back(this->player = new Player(this->texture[0],new_pos));
-//            }
-//        }
+        if(dynamic_cast<Block*>(objects[i])){
+            if(objects[i]->is_destroyed()==true){
+                this->objects[i]->del();
+                objects.erase(objects.begin()+i);
+                this->blocks_created--;
+                std::cout << this->blocks_created << std::endl;
+            }
+        }
     }
 }
 
@@ -73,9 +42,14 @@ void Game::collision(std::vector<Object*> &objects){
         sf::FloatRect nextPos = ball->getBounds();
         nextPos.left += ball->getVelocity().x*this->elapsed;
         nextPos.top += ball->getVelocity().y*this->elapsed;
+
         if(dynamic_cast<Block*>(objects[i]) || dynamic_cast<Player*>(objects[i])){
             if(this->objects[i]->getBounds().intersects(nextPos)==true){
-
+                if(dynamic_cast<Block*>(objects[i])){
+                    if(objects[i]->getBounds().intersects(nextPos)==true){
+                        objects[i]->getDestroyed();
+                    }
+                }
                 //Bottom collision
                 if(this->ball->getBounds().top < this->objects[i]->getBounds().top
                     && this->ball->getBounds().top + this->ball->getBounds().height < this->objects[i]->getBounds().top + this->objects[i]->getBounds().height
@@ -121,9 +95,42 @@ void Game::collision(std::vector<Object*> &objects){
 
 }
 
+void Game::loadTextures(){
+    //background
+    if(!texture.loadFromFile("Textures\\Backgrounds.png")){
+        throw("Could not load textures");
+    }
+
+    this->texture.setRepeated(true);
+    this->Texture.emplace_back(texture);
+    this->texture.setRepeated(false);
+
+        //player
+    if(!texture.loadFromFile("Textures\\platform_normal.png")){
+        throw("Could not load textures");
+    }
+    this->Texture.emplace_back(texture);
+
+        //blocks
+    if(!texture.loadFromFile("Textures\\Block_red.png")){
+        throw("Could not load textures");
+    }
+    this->Texture.emplace_back(texture);
+
+    if(!texture.loadFromFile("Textures\\Block_yellow.png")){
+        throw("Could not load textures");
+    }
+    this->Texture.emplace_back(texture);
+
+    if(!texture.loadFromFile("Textures\\Block_blue.png")){
+        throw("Could not load textures");
+    }
+    this->Texture.emplace_back(texture);
+}
+
 void Game::lvl_1(){
     this->objects.emplace_back(this ->background = new Background(this->Texture[0]));
-    sf::Vector2f initial_pos = {640,600};
+    sf::Vector2f initial_pos = {600,600};
     this->objects.emplace_back(this->player = new Player(this->Texture[1], initial_pos));
     this->objects.emplace_back(this->ball = new Ball(this->Texture[1]));
 
@@ -140,21 +147,22 @@ void Game::lvl_1(){
         sf::Vector2f new_pos = {80.f+80.f*i,100.f+200.f};
         this->objects.emplace_back(this->block = new Block(this->Texture[2],new_pos));
     }
-//    for(unsigned i=0;i<14;i++){
-//        sf::Vector2f new_pos = {300.f,62.f+40.f*i};
-//        this->objects.emplace_back(this->block = new Block(this->Texture[4],new_pos));
-//    }
+    this->blocks_created = 42;
+}
 
-//    for(unsigned i=0;i<14;i++){
-//        sf::Vector2f new_pos = {500.f,62.f+40.f*i};
-//        this->objects.emplace_back(this->block = new Block(this->Texture[2],new_pos));
-//    }
-
+bool Game::lvl_1_complete(){
+    if(this->blocks_created==0){
+        return true;
+    }
+    return false;
 }
 
 void Game::start(){
-    while(window.isOpen()){
+    while(window.isOpen()&&lvl_1_complete()!=true){
         this->update();
         this->draw();
+    }
+    if(lvl_1_complete()==true){
+        std::cout << "WINNER!!!" << std::endl;
     }
 }

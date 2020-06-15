@@ -1,5 +1,9 @@
 #include "object.h"
 
+bool Object::is_destroyed(){
+    return this->destroy;
+}
+
 Object::Object(const sf::Texture &texture): sprite(texture){
     this->destroy = false;
 }
@@ -22,4 +26,8 @@ void Object::del(){
 
 void Object::draw(sf::RenderTarget &render_target){
     render_target.draw(this->sprite);
+}
+
+bool Object::getDestroyed(){
+    return this->destroy = true;
 }
