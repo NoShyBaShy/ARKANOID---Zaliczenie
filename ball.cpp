@@ -59,6 +59,8 @@ void Ball::animate(const float &elapsed){
 
 }
 
+int Ball::mod_ID(){}
+
 sf::Vector2f Ball::getVelocity(){
     return velocity;
 }

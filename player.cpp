@@ -1,12 +1,13 @@
 #include "player.h"
 
-Player::Player(const sf::Texture &texture,const sf::Vector2f &position) : Object(texture){
-    this->HP=1;
+Player::Player(const sf::Texture &texture,const sf::Vector2f &position, int xscale) : Object(texture){
+
     this->speed = 300;
     this->sprite.setPosition(position);
-    this->sprite.setScale(4,3);
-    this->Points=0;
+    this->sprite.setScale(xscale,3);
 }
+
+Player::Player() : Object(){}
 
 void Player::update(const float &elapsed){
     if(this->getPosition().x < 80){this->setPosition(80,this->getPosition().y);}
@@ -26,16 +27,8 @@ void Player::animate(const float &elapsed){
     this->sprite.move(velocity);
 }
 
-int Player::changeHP(int hp){
-    return this->HP+hp;
-}
+int Player::mod_ID(){}
 
-int Player::changePoints(int points){
-    return this->Points+points;
-}
 
-bool Player::smallSize(){
-    this->normal=false;
-    this->big=false;
-    return small==true;
-};
+
+

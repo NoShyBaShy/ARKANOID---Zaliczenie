@@ -9,12 +9,13 @@
 
 class Object
 {
-protected:
+public:
     sf::Sprite sprite;
     bool destroy;
 
 public:
     Object(const sf::Texture &texture);
+    Object();
     virtual ~Object() = default;
 
     sf::FloatRect getBounds();
@@ -23,6 +24,7 @@ public:
 
     virtual void animate(const float &elapsed)=0;
     virtual void update(const float &elapsed)=0;
+    virtual int mod_ID()=0;
     void del();
     void draw(sf::RenderTarget &render_target);
     bool getDestroyed();

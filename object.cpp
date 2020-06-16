@@ -8,6 +8,8 @@ Object::Object(const sf::Texture &texture): sprite(texture){
     this->destroy = false;
 }
 
+Object::Object(){}
+
 sf::FloatRect Object::getBounds(){
     return this->sprite.getGlobalBounds();
 }

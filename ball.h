@@ -13,6 +13,7 @@ public:
 
     virtual void update(const float &elapsed);
     virtual void animate(const float &elapsed);
+    virtual int mod_ID();
     sf::Vector2f getVelocity();
 
     sf::Vector2f changeVelocity_x();

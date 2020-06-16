@@ -1,7 +1,5 @@
 #include "mod.h"
 
-
-
 Mod::Mod(const sf::Texture &texture, const sf::Vector2f &pos, int mod_number) : Object(texture){
     this->setPosition(pos.x,pos.y);
     this->speed=200;
@@ -30,4 +28,6 @@ void Mod::animate(const float &elapsed){
 int Mod::mod_ID(){
     return this->mod_identity;
 }
+
+
 void Mod::update(const float &elapsed){}

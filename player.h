@@ -2,28 +2,17 @@
 #define PLAYER_H
 #include <object.h>
 
-class Player : public Object
+class Player : virtual public Object
 {
-private:
-    int HP;
+private:    
     int speed;
-    int Points;
-
-    bool small;
-    bool normal;
-    bool big;
-
 public:
-    Player(const sf::Texture &texture,const sf::Vector2f &position);
+    Player(const sf::Texture &texture,const sf::Vector2f &position,int xscale);
+    Player();
 
     virtual void update(const float &elapsed);
     virtual void animate(const float &elapsed);
-
-    int changeHP(int hp);
-    int changePoints(int points);
-    bool smallSize();
-    bool normalSize();
-    bool bigSize();
+    virtual int mod_ID();
 };
 
 #endif // PLAYER_H

@@ -5,4 +5,6 @@ Block::Block(const sf::Texture &texture, const sf::Vector2f &pos) : Object(textu
     this->sprite.setPosition(pos);
 }
 void Block::animate(const float &elapsed){}
+
+int Block::mod_ID(){}
 void Block::update(const float &elapsed){}

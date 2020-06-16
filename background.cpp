@@ -6,4 +6,6 @@ Background::Background(const sf::Texture &texture) : Object(texture){
 }
 
 void Background::animate(const float &elapsed){}
+
+int Background::mod_ID(){}
 void Background::update(const float &elapsed){}
