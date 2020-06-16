@@ -23,6 +23,7 @@ private:
     std::vector<sf::Texture> Texture;
 
     int blocks_created;
+    int balls_created;
 
     void update();
     void draw();
@@ -32,6 +33,7 @@ private:
 
     void lvl_1();
     bool lvl_1_complete();
+    bool lvl_1_defeat();
 
 public:
     Game();

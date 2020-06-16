@@ -10,10 +10,13 @@ Ball::Ball(const sf::Texture &texture) : Object(texture){
 }
 
 void Ball::update(const float &elapsed){
+
+        // ball release --------------------
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
         this->is_release = false;
     }
-    //screencollision
+
+        //screencollision --------------------
     if(this->getPosition().x < 80){
         this->setPosition(80,this->getPosition().y);
         velocity.x = this->changeVelocity_x().x;
@@ -29,6 +32,8 @@ void Ball::update(const float &elapsed){
 }
 
 void Ball::animate(const float &elapsed){
+
+        // controls --------------------
     if(this->is_release==true){
         sf::Vector2f vel;
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
