@@ -106,6 +106,11 @@ void Game::collision(std::vector<Object*> &objects){
                         objects[i]->getDestroyed();
                     }
                     if(objects[i]->is_destroyed()==true){
+                            // create mod
+                        int mod_create = rand()%3;
+                        if(mod_create==1){
+                            objects.emplace_back(new Mod(Texture[5],objects[i]->getPosition(),rand()%4));
+                        }
                         this->objects[i]->del();
                         objects.erase(objects.begin()+i);
                         this->blocks_created--;
@@ -126,30 +131,36 @@ void Game::loadTextures(){
     }
 
     this->texture.setRepeated(true);
-    this->Texture.emplace_back(texture);
+    this->Texture.emplace_back(texture); //texture[0] --- background
     this->texture.setRepeated(false);
 
         //player ---------------------
     if(!texture.loadFromFile("Textures\\platform_normal.png")){
         throw("Could not load textures");
     }
-    this->Texture.emplace_back(texture);
+    this->Texture.emplace_back(texture); //texture[1] --- player
 
         //blocks ----------------------
     if(!texture.loadFromFile("Textures\\Block_red.png")){
         throw("Could not load textures");
     }
-    this->Texture.emplace_back(texture);
+    this->Texture.emplace_back(texture); //texture[2] --- block_red
 
     if(!texture.loadFromFile("Textures\\Block_yellow.png")){
         throw("Could not load textures");
     }
-    this->Texture.emplace_back(texture);
+    this->Texture.emplace_back(texture); //texture[3] --- block_yellow
 
     if(!texture.loadFromFile("Textures\\Block_blue.png")){
         throw("Could not load textures");
     }
-    this->Texture.emplace_back(texture);
+    this->Texture.emplace_back(texture); //texture[4] --- block_blue
+
+        //mod -----------------
+    if(!texture.loadFromFile("Textures\\mods.png")){
+        throw("Could not load textures");
+    }
+    this->Texture.emplace_back(texture); //texture[5] --- mods
 }
 
 void Game::lvl_1(){

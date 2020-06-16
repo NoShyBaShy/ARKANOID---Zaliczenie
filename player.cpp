@@ -5,6 +5,7 @@ Player::Player(const sf::Texture &texture,const sf::Vector2f &position) : Object
     this->speed = 300;
     this->sprite.setPosition(position);
     this->sprite.setScale(4,3);
+    this->Points=0;
 }
 
 void Player::update(const float &elapsed){
@@ -23,9 +24,18 @@ void Player::animate(const float &elapsed){
         velocity.x = speed*elapsed;
     }
     this->sprite.move(velocity);
+}
 
+int Player::changeHP(int hp){
+    return this->HP+hp;
+}
+
+int Player::changePoints(int points){
+    return this->Points+points;
 }
 
 bool Player::smallSize(){
-    this->normal=false;this->big=false;return small==true;
+    this->normal=false;
+    this->big=false;
+    return small==true;
 };

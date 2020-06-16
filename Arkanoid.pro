@@ -17,6 +17,7 @@ SOURCES += \
         functions.cpp \
         game.cpp \
         main.cpp \
+        mod.cpp \
         object.cpp \
         player.cpp
 
@@ -26,5 +27,6 @@ HEADERS += \
     block.h \
     class.h \
     game.h \
+    mod.h \
     object.h \
     player.h

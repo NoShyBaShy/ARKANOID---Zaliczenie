@@ -7,9 +7,10 @@ class Player : public Object
 private:
     int HP;
     int speed;
+    int Points;
 
     bool small;
-    bool normal = true;
+    bool normal;
     bool big;
 
 public:
@@ -18,8 +19,11 @@ public:
     virtual void update(const float &elapsed);
     virtual void animate(const float &elapsed);
 
-    int changeHP(){return HP-=1;}
+    int changeHP(int hp);
+    int changePoints(int points);
     bool smallSize();
+    bool normalSize();
+    bool bigSize();
 };
 
 #endif // PLAYER_H

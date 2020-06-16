@@ -4,7 +4,7 @@
 #include <background.h>
 #include <ball.h>
 #include <block.h>
-
+#include <mod.h>
 class Game
 {
 private:
