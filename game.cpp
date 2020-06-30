@@ -4,7 +4,9 @@ Game::Game(){
 
     this->window.create(sf::VideoMode(1280,720), "Arkanoid");
     this->window.setFramerateLimit(120);
+    this->loadMusic();
     this->loadTextures();
+    this->loadFont();
     this->Points=0;
     this->HP=1;
     this->lvl_started=false;
@@ -12,6 +14,9 @@ Game::Game(){
 
 }
 void Game::update(){
+
+        // SCORE -------------------
+    this->setFont();
         // CLOCK -------------------
     this->elapsed = clock.restart().asSeconds();
 
@@ -45,6 +50,9 @@ void Game::draw(){
         el->draw(this->window);
     }
     this->player->draw(this->window);
+    this->window.draw(score);
+    this->window.draw(Health);
+    this->window.draw(level);
     this->window.display();
 }
 
@@ -61,6 +69,8 @@ void Game::collision(std::vector<Object*> &objects){
         if(dynamic_cast<Ball*>(objects[i])){
             if(objects[i]->getPosition().y > 720){
                 this->objects[i]->getDestroyed();
+                    //HITSOUND
+                this->sound_lose.play();
             }
             if(objects[i]->is_destroyed()==true){
                 objects.erase(objects.begin()+i);                
@@ -76,7 +86,10 @@ void Game::collision(std::vector<Object*> &objects){
 
             // SET AND DELETE MOD -------------------
         if(dynamic_cast<Mod*>(objects[i])){
-            if(this->player->getBounds().intersects(this->objects[i]->getBounds())){              
+            if(this->player->getBounds().intersects(this->objects[i]->getBounds())){
+                    //HITSOUND
+                this->sound_powerup.play();
+
                 this->setMod(objects);
                 this->objects[i]->getDestroyed();
             }
@@ -91,6 +104,9 @@ void Game::collision(std::vector<Object*> &objects){
         }
             // COLLISION WITH PLAYERS -------------------
         if(this->player->getBounds().intersects(nextPos)==true){
+
+                //HITSOUND
+            this->sound_player.play();
 
             //BOTTOM COLLISION -------------------
             if(this->ball->getBounds().top < this->player->getBounds().top
@@ -135,6 +151,9 @@ void Game::collision(std::vector<Object*> &objects){
         if(dynamic_cast<Block*>(objects[i])){
 
             if(this->objects[i]->getBounds().intersects(nextPos)==true){
+
+                    //HITSOUND
+                this->sound_block.play();;
 
                 //BOTTOM COLLISION -------------------
                 if(this->ball->getBounds().top < this->objects[i]->getBounds().top
@@ -244,6 +263,77 @@ void Game::loadTextures(){
     this->Texture.emplace_back(texture); //texture[5] --- mods
 }
 
+void Game::loadMusic(){
+
+        //PLAYER HIT
+    if(!buffer_player.loadFromFile("Music\\player.ogg")){
+        throw("Could not load sound");
+    }
+    sound_player.setBuffer(buffer_player);
+
+        //BLOCK HIT
+    if(!buffer_block.loadFromFile("Music\\block.ogg")){
+        throw("Could not load sound");
+    }
+    sound_block.setBuffer(buffer_block);
+
+        //POWER UP PICK
+    if(!buffer_powerup.loadFromFile("Music\\powerup.ogg")){
+        throw("Could not load sound");
+    }
+    sound_powerup.setBuffer(buffer_powerup);
+
+        //WIN
+    if(!buffer_win.loadFromFile("Music\\win.ogg")){
+        throw("Could not load sound");
+    }
+    sound_win.setBuffer(buffer_win);
+
+        //LOSE
+    if(!buffer_lose.loadFromFile("Music\\lose.ogg")){
+        throw("Could not load sound");
+    }
+    sound_lose.setBuffer(buffer_lose);
+
+    sound_player.setVolume(10);
+    sound_block.setVolume(10);
+    sound_powerup.setVolume(10);
+    sound_win.setVolume(10);
+    sound_lose.setVolume(10);
+
+}
+
+void Game::loadFont(){
+    if(!font.loadFromFile("Font//New Athletic M54.ttf")){
+        throw("Could not load font");
+    }
+
+    Health.setFont(font);
+    Health.setCharacterSize(40);
+
+    score.setFont(font);
+    score.setCharacterSize(40);
+    score.setPosition(550,0);
+
+    level.setFont(font);
+    level.setCharacterSize(40);
+    level.setPosition(1200,0);
+}
+
+void Game::setFont(){
+    std::ostringstream ssScore;
+    ssScore << "Score: " << this->Points;
+    score.setString(ssScore.str());
+
+    std::ostringstream ssHP;
+    ssHP << "HP: " << this->balls_created;
+    Health.setString(ssHP.str());
+
+    std::ostringstream sslevel;
+    sslevel << "LVL: " << this->LVL;
+    level.setString(sslevel.str());
+}
+
 void Game::lvl_1(){
 
         //VARIABLE VALUE -------------------
@@ -252,7 +342,7 @@ void Game::lvl_1(){
     this->xScale = 4;
 
         // CREATE OBJECT --------------------
-    this->objects.emplace_back(this ->background = new Background(this->Texture[0]));
+    this->objects.emplace_back(this ->background = new Background(this->Texture[0],sf::IntRect(0,0,1120,900),{80,62}));
     this->player = new Player(this->Texture[1],this->xScale);
     this->objects.emplace_back(this->ball = new Ball(this->Texture[1]));
 
@@ -274,6 +364,7 @@ void Game::lvl_1(){
 }
 
 void Game::lvl_2(){
+
 
         //VARIABLE VALUE -------------------
     this->blocks_created = 84;
@@ -323,10 +414,12 @@ int Game::lvl_complete(){
     if(this->blocks_created==0){
         this->lvl_started=false;
         std::cout << "LVL COMPLETE!! NEXT LVL: " << LVL+1 << std::endl;
+            //  HITSOUND
+        this->sound_win.play();
         return this->LVL+=1;
     }
     if(this->balls_created==0){
-        return  this->LVL =3;
+            return this->LVL =3;
     }
     return this->LVL;
 
@@ -345,6 +438,7 @@ int Game::changeHP(int hp){
 int Game::changePoints(int points){
     return this->Points+=points;
 }
+
 
 void Game::setMod(std::vector<Object*> &objects){
     for(unsigned i=0;i<objects.size();i++){
@@ -392,7 +486,7 @@ void Game::reset(){
     objects.clear();
     delete ball;
     delete player;
-    this->objects.emplace_back(this ->background = new Background(this->Texture[0]));
+    this->objects.emplace_back(this ->background = new Background(this->Texture[0],sf::IntRect(0,0,1120,900),{80,62}));
     this->player = new Player(this->Texture[1],this->xScale);
     this->objects.emplace_back(this->ball = new Ball(this->Texture[1],this->player->getPosition().x+this->player->getBounds().width*0.5));
 
@@ -415,16 +509,17 @@ void Game::start(){
             this->reset();
             this->lvl_2();
         }
+
         this->update();
         this->draw();
         this->lvl_complete();
+
     }
 
         // END GAME ANNOUNCEMENT -------------------
     if(this->LVL==3&&balls_created>0){
-        std::cout << "YOU WON!!!" << "  TOTAL POINTS: " << this->Points << std::endl;
+        std::cout << "YOU WON!!!" << "  TOTAL POINTS: " << this->Points << std::endl;       
     }
-
     if(this->balls_created==0){
         std::cout << "YOU LOST!!! TRY AGAIN!!!" << std::endl;
     }

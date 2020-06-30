@@ -67,12 +67,14 @@ void Ball::animate(const float &elapsed){
             vel.x = speed*elapsed;
             this->velocity.x = speed-100;
         }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
-            vel.y = speed*elapsed;
-        }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
-            vel.y = -speed*elapsed;
-        }
+
+        //DODATKOWA KONTROLA PILKI DO SPRAWDZANIA GRY
+//        if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
+//            vel.y = speed*elapsed;
+//        }
+//        if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
+//            vel.y = -speed*elapsed;
+//        }
 
         this->sprite.move(vel);
 

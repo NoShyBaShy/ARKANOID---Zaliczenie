@@ -5,7 +5,7 @@
 class Background : public Object
 {
 public:
-    Background(const sf::Texture &texture);
+    Background(const sf::Texture &texture,const sf::IntRect &rect,const sf::Vector2f &pos);
 
     virtual void update(const float &elapsed);
     virtual void animate(const float &elapsed);

@@ -2,10 +2,12 @@
 #define OBJECT_H
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
 #include <vector>
+#include <sstream>
 
 class Object
 {

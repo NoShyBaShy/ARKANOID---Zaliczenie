@@ -1,8 +1,8 @@
 #include "background.h"
 
-Background::Background(const sf::Texture &texture) : Object(texture){
-    this->sprite.setTextureRect(sf::IntRect(0,0,1120,900));
-    this->sprite.setPosition(80,62);
+Background::Background(const sf::Texture &texture,const sf::IntRect &rect,const sf::Vector2f &pos) : Object(texture){
+    this->sprite.setTextureRect(sf::IntRect(rect));
+    this->sprite.setPosition(pos);
 }
 
 void Background::animate(const float &elapsed){}
