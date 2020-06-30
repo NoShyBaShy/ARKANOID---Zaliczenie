@@ -14,7 +14,6 @@ SOURCES += \
         background.cpp \
         ball.cpp \
         block.cpp \
-        functions.cpp \
         game.cpp \
         main.cpp \
         mod.cpp \
@@ -25,7 +24,6 @@ HEADERS += \
     background.h \
     ball.h \
     block.h \
-    class.h \
     game.h \
     mod.h \
     object.h \
