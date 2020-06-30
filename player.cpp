@@ -7,6 +7,12 @@ Player::Player(const sf::Texture &texture,const sf::Vector2f &position, int xsca
     this->sprite.setScale(xscale,3);
 }
 
+Player::Player(const sf::Texture &texture, int xscale) : Object(texture){
+    this->speed = 300;
+    this->sprite.setPosition({600,600});
+    this->sprite.setScale(xscale,3);
+}
+
 Player::Player() : Object(){}
 
 void Player::update(const float &elapsed){
@@ -28,6 +34,12 @@ void Player::animate(const float &elapsed){
 }
 
 int Player::mod_ID(){}
+
+int Player::changeSpeed(int sp){
+    return this->speed+=sp;
+}
+
+
 
 
 

@@ -10,9 +10,11 @@ private:
     float speed;
 public:
     Ball(const sf::Texture &texture);
+    Ball(const sf::Texture &texture,const float &pos_x);
 
     virtual void update(const float &elapsed);
     virtual void animate(const float &elapsed);
+
     virtual int mod_ID();
     sf::Vector2f getVelocity();
 

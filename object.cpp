@@ -3,6 +3,10 @@
 bool Object::is_destroyed(){
     return this->destroy;
 }
+int Object::changeHP(int hp){
+    return this->HP+=hp;
+}
+
 
 Object::Object(const sf::Texture &texture): sprite(texture){
     this->destroy = false;

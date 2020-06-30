@@ -27,6 +27,10 @@ private:
     int xScale;
     int Points;
     int HP;
+    int LVL;
+
+    bool lvl_started;
+    bool mod_created;
 
     void update();
     void draw();
@@ -36,8 +40,11 @@ private:
     void loadTextures();
 
     void lvl_1();
-    bool lvl_1_complete();
-    bool lvl_1_defeat();
+    void lvl_2();
+
+    int lvl_complete();
+;
+    void reset();
     int change_xScale(int xscale);
     int changeHP(int hp);
     int changePoints(int points);

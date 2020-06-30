@@ -6,8 +6,9 @@
 class Block : public Object
 {
 private:
+
 public:
-    Block(const sf::Texture &texture,const sf::Vector2f &pos);
+    Block(const sf::Texture &texture,const sf::Vector2f &pos, int hp);
     virtual void update(const float &elapsed);
     virtual void animate(const float &elapsed);
     virtual int mod_ID();

@@ -9,6 +9,15 @@ Ball::Ball(const sf::Texture &texture) : Object(texture){
     this->setPosition(640,590);
 }
 
+Ball::Ball(const sf::Texture &texture, const float &pos_x) : Object(texture){
+    this->is_release=true;
+    this->speed=300;
+    this->sprite.setTextureRect(sf::IntRect(0,40,4,4));
+    this->sprite.setScale(2,2);
+    this->velocity = {0,200};
+    this->setPosition(pos_x,590);
+}
+
 void Ball::update(const float &elapsed){
 
         // ball release --------------------
@@ -17,18 +26,32 @@ void Ball::update(const float &elapsed){
     }
 
         //screencollision --------------------
-    if(this->getPosition().x < 80){
-        this->setPosition(80,this->getPosition().y);
-        velocity.x = this->changeVelocity_x().x;
+    if(this->is_release==false){
+        if(this->getPosition().x < 80){
+            this->setPosition(80,this->getPosition().y);
+            velocity.x = this->changeVelocity_x().x;
+        }
+        if(this->getPosition().x + this->getBounds().width > 1200){
+             this->setPosition(1200-this->getBounds().width,this->getPosition().y);
+            velocity.x = this->changeVelocity_x().x;
+        }
+        if(this->getPosition().y < 62){
+            this->setPosition(this->getPosition().x,62);
+            velocity.y = this->changeVelocity_y().y;
+        }
     }
-    if(this->getPosition().x + this->getBounds().width > 1200){
-         this->setPosition(1200-this->getBounds().width,this->getPosition().y);
-        velocity.x = this->changeVelocity_x().x;
+         //screencollision --------------------
+    if(this->is_release==true){
+        if(this->getPosition().x < 132){
+            this->setPosition(132,this->getPosition().y);
+            velocity.x = this->changeVelocity_x().x;
+        }
+        if(this->getPosition().x + this->getBounds().width > 1148){
+            this->setPosition(1148-this->getBounds().width,this->getPosition().y);
+            velocity.x = this->changeVelocity_x().x;
+        }
     }
-    if(this->getPosition().y < 62){
-        this->setPosition(this->getPosition().x,62);
-        velocity.y = this->changeVelocity_y().y;
-    }
+
 }
 
 void Ball::animate(const float &elapsed){
@@ -58,6 +81,7 @@ void Ball::animate(const float &elapsed){
     }
 
 }
+
 
 int Ball::mod_ID(){}
 

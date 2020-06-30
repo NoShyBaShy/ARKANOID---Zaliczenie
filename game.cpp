@@ -5,35 +5,41 @@ Game::Game(){
     this->window.create(sf::VideoMode(1280,720), "Arkanoid");
     this->window.setFramerateLimit(120);
     this->loadTextures();
-    this->lvl_1();
     this->Points=0;
     this->HP=1;
+    this->lvl_started=false;
+    this->LVL=1;
+
 }
 void Game::update(){
-        // clock -------------------
+        // CLOCK -------------------
     this->elapsed = clock.restart().asSeconds();
-        // event --------------------
+
+        // EVENT --------------------
     while (window.pollEvent(event)){
             if (event.type == sf::Event::Closed){
                 window.close();
             }
         }
+
+        //PLAYER MANAGMENT -----------------
     this->player->update(elapsed);
     this->player->animate(elapsed);
-    this->collision(objects);
-    for(unsigned i=0;i<objects.size();i++){
 
-            //objects managment ------------------
+        //COLLISION -----------------
+    this->collision(objects);
+
+
+        //OBJECTS MANAGMENT ------------------
+    for(unsigned i=0;i<objects.size();i++){          
         objects[i]->update(elapsed);
         objects[i]->animate(elapsed);
-
-
     }
 }
 
 void Game::draw(){
 
-        //draw objects ------------------
+        //DRAW OBJECTS ------------------
     this->window.clear(sf::Color::Black);
     for(auto &el : objects){
         el->draw(this->window);
@@ -46,28 +52,31 @@ void Game::collision(std::vector<Object*> &objects){
 
     for(unsigned i=0;i<objects.size();i++){
 
-            //Ball next position ----------------------
+            //BALL NEXT POSITION ----------------------
         sf::FloatRect nextPos = ball->getBounds();
         nextPos.left += ball->getVelocity().x*this->elapsed;
         nextPos.top += ball->getVelocity().y*this->elapsed;
 
-            // Delete ball  ---------------------
+            // DELETE BALL  ---------------------
         if(dynamic_cast<Ball*>(objects[i])){
             if(objects[i]->getPosition().y > 720){
                 this->objects[i]->getDestroyed();
             }
             if(objects[i]->is_destroyed()==true){
-                this->objects[i]->del();
-                objects.erase(objects.begin()+i);
+                objects.erase(objects.begin()+i);                
                 this->balls_created--;
                 std::cout << "BALLS LEFT: " << this->balls_created << std::endl;
+                if(this->balls_created>0){
+                    delete ball;
+                    objects.emplace_back(this->ball = new Ball(Texture[1],this->player->getPosition().x+this->player->getBounds().width*0.5));
+                }
             }
         }
 
 
-            // set and delete mod
+            // SET AND DELETE MOD -------------------
         if(dynamic_cast<Mod*>(objects[i])){
-            if(this->player->getBounds().intersects(this->objects[i]->getBounds())){
+            if(this->player->getBounds().intersects(this->objects[i]->getBounds())){              
                 this->setMod(objects);
                 this->objects[i]->getDestroyed();
             }
@@ -77,12 +86,13 @@ void Game::collision(std::vector<Object*> &objects){
             if(objects[i]->is_destroyed()==true){
                 this->objects[i]->del();
                 objects.erase(objects.begin()+i);
+                this->mod_created = false;
             }
         }
-            // collision with player
+            // COLLISION WITH PLAYERS -------------------
         if(this->player->getBounds().intersects(nextPos)==true){
 
-            //Bottom collision
+            //BOTTOM COLLISION -------------------
             if(this->ball->getBounds().top < this->player->getBounds().top
                 && this->ball->getBounds().top + this->ball->getBounds().height < this->player->getBounds().top + this->player->getBounds().height
                 && this->ball->getBounds().left < this->player->getBounds().left + this->player->getBounds().width
@@ -91,7 +101,7 @@ void Game::collision(std::vector<Object*> &objects){
                ball->changeVelocity_y();
                this->ball->setPosition(this->ball->getBounds().left,this->player->getBounds().top-this->ball->getBounds().height);
             }
-            //Top collision
+            //TOP COLLISION -------------------
             if(this->ball->getBounds().top > this->player->getBounds().top
                     && this->ball->getBounds().top + this->ball->getBounds().height > this->player->getBounds().top + this->player->getBounds().height
                     && this->ball->getBounds().left < this->player->getBounds().left + this->player->getBounds().width
@@ -100,7 +110,7 @@ void Game::collision(std::vector<Object*> &objects){
                this->ball->setPosition(this->ball->getBounds().left,this->player->getBounds().top+this->player->getBounds().height);
                ball->changeVelocity_y();
             }
-            //Right collision
+            //RIGHT COLLISION -------------------
             if(this->ball->getBounds().left < this->player->getBounds().left
                 && this->ball->getBounds().left + this->ball->getBounds().width < this->player->getBounds().left + this->player->getBounds().width
                 && this->ball->getBounds().top < this->player->getBounds().top + this->player->getBounds().height
@@ -110,7 +120,7 @@ void Game::collision(std::vector<Object*> &objects){
                 this->ball->setPosition(this->player->getBounds().left-this->ball->getBounds().width,this->ball->getBounds().top);
 
             }
-            //Left collision
+            //LEFT COLLISION -------------------
             if(this->ball->getBounds().left > this->objects[i]->getBounds().left
                 && this->ball->getBounds().left + this->ball->getBounds().width > this->player->getBounds().left + this->player->getBounds().width
                 && this->ball->getBounds().top < this->objects[i]->getBounds().top + this->player->getBounds().height
@@ -121,12 +131,12 @@ void Game::collision(std::vector<Object*> &objects){
             }
         }
 
-            //Collision with blocks ------------------
+            //COLLISION WITH BLOCKS ------------------
         if(dynamic_cast<Block*>(objects[i])){
 
             if(this->objects[i]->getBounds().intersects(nextPos)==true){
 
-                //Bottom collision
+                //BOTTOM COLLISION -------------------
                 if(this->ball->getBounds().top < this->objects[i]->getBounds().top
                     && this->ball->getBounds().top + this->ball->getBounds().height < this->objects[i]->getBounds().top + this->objects[i]->getBounds().height
                     && this->ball->getBounds().left < this->objects[i]->getBounds().left + this->objects[i]->getBounds().width
@@ -135,7 +145,7 @@ void Game::collision(std::vector<Object*> &objects){
                    ball->changeVelocity_y();
                    this->ball->setPosition(this->ball->getBounds().left,this->objects[i]->getBounds().top-this->ball->getBounds().height);
                 }
-                //Top collision
+                //TOP COLLISION -------------------
                 if(this->ball->getBounds().top > this->objects[i]->getBounds().top
                         && this->ball->getBounds().top + this->ball->getBounds().height > this->objects[i]->getBounds().top + this->objects[i]->getBounds().height
                         && this->ball->getBounds().left < this->objects[i]->getBounds().left + this->objects[i]->getBounds().width
@@ -144,7 +154,7 @@ void Game::collision(std::vector<Object*> &objects){
                    this->ball->setPosition(this->ball->getBounds().left,this->objects[i]->getBounds().top+this->objects[i]->getBounds().height);
                    ball->changeVelocity_y();
                 }
-                //Right collision
+                //RIGHT COLLISION -------------------
                 if(this->ball->getBounds().left < this->objects[i]->getBounds().left
                     && this->ball->getBounds().left + this->ball->getBounds().width < this->objects[i]->getBounds().left + this->objects[i]->getBounds().width
                     && this->ball->getBounds().top < this->objects[i]->getBounds().top + this->objects[i]->getBounds().height
@@ -154,7 +164,7 @@ void Game::collision(std::vector<Object*> &objects){
                     this->ball->setPosition(this->objects[i]->getBounds().left-this->ball->getBounds().width,this->ball->getBounds().top);
 
                 }
-                //Left collision
+                //LEFT COLLISION -------------------
                 if(this->ball->getBounds().left > this->objects[i]->getBounds().left
                     && this->ball->getBounds().left + this->ball->getBounds().width > this->objects[i]->getBounds().left + this->objects[i]->getBounds().width
                     && this->ball->getBounds().top < this->objects[i]->getBounds().top + this->objects[i]->getBounds().height
@@ -164,17 +174,21 @@ void Game::collision(std::vector<Object*> &objects){
                    ball->changeVelocity_x();
                 }
 
-                    // delete Block
+                    // DELETE BLOCK -------------------
                 if(dynamic_cast<Block*>(objects[i])){
                     if(objects[i]->getBounds().intersects(nextPos)==true){
-                        objects[i]->getDestroyed();
+                        objects[i]->changeHP(-1);
+                        if(objects[i]->changeHP(-1)<=0){
+                           objects[i]->getDestroyed();
+                        }
                     }
                     if(objects[i]->is_destroyed()==true){
 
-                            // create mod
-                        int mod_create = rand()%3;
-                        if(mod_create==1){
-                            objects.emplace_back(new Mod(Texture[5],objects[i]->getPosition(),rand()%5));
+                            // create mod -------------------
+                        int mod_create = 1;
+                        if(mod_create==1&&this->mod_created==false){
+                            this->mod_created = true;
+                            objects.emplace_back(new Mod(Texture[5],objects[i]->getPosition()));
                         }
                         this->objects[i]->del();
                         objects.erase(objects.begin()+i);
@@ -201,13 +215,13 @@ void Game::loadTextures(){
     this->Texture.emplace_back(texture); //texture[0] --- background
     this->texture.setRepeated(false);
 
-        //player ---------------------
+        //PLAYER ---------------------
     if(!texture.loadFromFile("Textures\\platform_normal.png")){
         throw("Could not load textures");
     }
     this->Texture.emplace_back(texture); //texture[1] --- player
 
-        //blocks ----------------------
+        //BLOCKS ----------------------
     if(!texture.loadFromFile("Textures\\Block_red.png")){
         throw("Could not load textures");
     }
@@ -232,48 +246,90 @@ void Game::loadTextures(){
 
 void Game::lvl_1(){
 
-        //variable value
+        //VARIABLE VALUE -------------------
     this->blocks_created = 42;
-    this->balls_created = 1;
+    this->balls_created = 2;
     this->xScale = 4;
 
-        // create objects --------------------
+        // CREATE OBJECT --------------------
     this->objects.emplace_back(this ->background = new Background(this->Texture[0]));
-    sf::Vector2f initial_pos = {600,600};
-    this->player = new Player(this->Texture[1], initial_pos,this->xScale);
+    this->player = new Player(this->Texture[1],this->xScale);
     this->objects.emplace_back(this->ball = new Ball(this->Texture[1]));
 
-        //blocks
+        //blocks -------------------
     for(unsigned i=0;i<14;i++){
         sf::Vector2f new_pos = {80.f+80.f*i,100.f};
-        this->objects.emplace_back(this->block = new Block(this->Texture[4],new_pos));
+        this->objects.emplace_back(this->block = new Block(this->Texture[4],new_pos,6));
     }
     for(unsigned i=0;i<14;i++){
         sf::Vector2f new_pos = {80.f+80.f*i,100.f+40.f};
-        this->objects.emplace_back(this->block = new Block(this->Texture[3],new_pos));
+        this->objects.emplace_back(this->block = new Block(this->Texture[3],new_pos,4));
     }
     for(unsigned i=0;i<14;i++){
         sf::Vector2f new_pos = {80.f+80.f*i,100.f+200.f};
-        this->objects.emplace_back(this->block = new Block(this->Texture[2],new_pos));
+        this->objects.emplace_back(this->block = new Block(this->Texture[2],new_pos,2));
+    }
+
+
+}
+
+void Game::lvl_2(){
+
+        //VARIABLE VALUE -------------------
+    this->blocks_created = 84;
+    this->xScale = 4;
+
+        //BLOCKS -------------------
+    for(unsigned i=0;i<8;i++){
+        sf::Vector2f new_pos = {320.f+80.f*i,100.f};
+        this->objects.emplace_back(this->block = new Block(this->Texture[4],new_pos,4));
+    }
+    for(unsigned i=0;i<10;i++){
+        sf::Vector2f new_pos = {240.f+80.f*i,140.f};
+        if(i==0 || i==9){
+            this->objects.emplace_back(this->block = new Block(this->Texture[4],new_pos,4));
+        }else{
+            this->objects.emplace_back(this->block = new Block(this->Texture[3],new_pos,6));
+        }
+
+    }
+    for(unsigned i=0;i<12;i++){
+        for(unsigned j=0;j<4;j++){
+            sf::Vector2f new_pos = {160.f+80.f*i,180.f+40.f*j};
+            if(i==0 || i==11){
+                this->objects.emplace_back(this->block = new Block(this->Texture[4],new_pos,4));
+            }else if(i==1 || i==10){
+                this->objects.emplace_back(this->block = new Block(this->Texture[3],new_pos,6));
+            }else{
+                this->objects.emplace_back(this->block = new Block(this->Texture[2],new_pos,2));
+            }
+        }
+    }
+    for(unsigned i=0;i<10;i++){
+        sf::Vector2f new_pos = {240.f+80.f*i,340.f};
+        if(i==0 || i==9){
+            this->objects.emplace_back(this->block = new Block(this->Texture[4],new_pos,4));
+        }else{
+            this->objects.emplace_back(this->block = new Block(this->Texture[2],new_pos,2));
+        }
+    }
+    for(unsigned i=0;i<8;i++){
+        sf::Vector2f new_pos = {320.f+80.f*i,380.f};
+        this->objects.emplace_back(this->block = new Block(this->Texture[2],new_pos,2));
     }
 }
 
-bool Game::lvl_1_complete(){
-
-        // check all blocks destroyed
+int Game::lvl_complete(){
     if(this->blocks_created==0){
-        return true;
+        this->lvl_started=false;
+        std::cout << "LVL COMPLETE!! NEXT LVL: " << LVL+1 << std::endl;
+        return this->LVL+=1;
     }
-    return false;
-}
-
-bool Game::lvl_1_defeat(){
-
-        // check all balls destroyed
     if(this->balls_created==0){
-        return true;
+        return  this->LVL =3;
     }
-    return false;
+    return this->LVL;
+
 }
 
 int Game::change_xScale(int xscale){
@@ -283,7 +339,7 @@ int Game::change_xScale(int xscale){
 }
 
 int Game::changeHP(int hp){
-    return this->HP+hp;
+    return this->HP+=hp;
 }
 
 int Game::changePoints(int points){
@@ -292,43 +348,84 @@ int Game::changePoints(int points){
 
 void Game::setMod(std::vector<Object*> &objects){
     for(unsigned i=0;i<objects.size();i++){
-        if(objects[i]->mod_ID()==0){
+        if(objects[i]->mod_ID()==0 || objects[i]->mod_ID()==1 || objects[i]->mod_ID()==2){
             this->change_xScale(8);
             player = new Player(this->Texture[1],this->player->getPosition(),this->xScale);
         }
-        else if(objects[i]->mod_ID()==1){
+        else if(objects[i]->mod_ID()==3){
             this->change_xScale(2);
             player = new Player(this->Texture[1],this->player->getPosition(),this->xScale);
         }
-        else if(objects[i]->mod_ID()==2){
+        else if(objects[i]->mod_ID()==4 ||objects[i]->mod_ID()==5 || objects[i]->mod_ID()==6){
             this->change_xScale(4);
             player = new Player(this->Texture[1],this->player->getPosition(),this->xScale);
         }
-        else if(objects[i]->mod_ID()==3){
+        else if(objects[i]->mod_ID()==7|| objects[i]->mod_ID()==8 || objects[i]->mod_ID()==9){
             this->changePoints(1000);
             std::cout << "+1000 POINTS: " << this->Points << std::endl;
         }
-        else if(objects[i]->mod_ID()==4){
+        else if(objects[i]->mod_ID()==10 || objects[i]->mod_ID()==11 || objects[i]->mod_ID()==12){
             this->changePoints(-1000);
             std::cout << "-1000 POINTS: " << this->Points << std::endl;
+        }
+        else if(objects[i]->mod_ID()==13 || objects[i]->mod_ID()==14 || objects[i]->mod_ID()==15){
+           this->balls_created--;
+            std::cout << "-1 HP: " << this->balls_created << std::endl;
+        }
+        else if(objects[i]->mod_ID()==16){
+            this->balls_created++;
+            std::cout << "+1 HP: " << this->balls_created << std::endl;
+        }
+        else if(objects[i]->mod_ID()==17 || objects[i]->mod_ID()==18){
+            this->player->changeSpeed(100);
+            std::cout << "Player's speed - INCREASE! "<< std::endl;
+        }
+        else if(objects[i]->mod_ID()==19 || objects[i]->mod_ID()==20){
+            this->player->changeSpeed(-100);
+            std::cout << "Player's speed - DECREASE! "<< std::endl;
         }
     }
 
 }
 
+void Game::reset(){
+    objects.clear();
+    delete ball;
+    delete player;
+    this->objects.emplace_back(this ->background = new Background(this->Texture[0]));
+    this->player = new Player(this->Texture[1],this->xScale);
+    this->objects.emplace_back(this->ball = new Ball(this->Texture[1],this->player->getPosition().x+this->player->getBounds().width*0.5));
+
+    this->mod_created=false;
+}
+
+
+
+
 void Game::start(){
 
-        // game loop
-    while(window.isOpen()&&lvl_1_complete()!=true&&lvl_1_defeat()!=true){
+        // GAME LOOP -------------------
+    while(window.isOpen()&&LVL!=3){
+        if(this->LVL==1&&this->lvl_started==false){
+            lvl_started=true;
+            this->lvl_1();
+        }
+        if(this->LVL==2&&this->lvl_started==false){
+            lvl_started=true;
+            this->reset();
+            this->lvl_2();
+        }
         this->update();
         this->draw();
+        this->lvl_complete();
     }
 
-        // end game announcement
-    if(lvl_1_complete()==true){
-        std::cout << "YOU WON!!!" << std::endl;
+        // END GAME ANNOUNCEMENT -------------------
+    if(this->LVL==3&&balls_created>0){
+        std::cout << "YOU WON!!!" << "  TOTAL POINTS: " << this->Points << std::endl;
     }
-    if(lvl_1_defeat()==true){
+
+    if(this->balls_created==0){
         std::cout << "YOU LOST!!! TRY AGAIN!!!" << std::endl;
     }
 }

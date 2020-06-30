@@ -1,5 +1,5 @@
-#ifndef OBJECT_H
-#define OBJECT_H
+#ifndef ENTITY_H
+#define ENTITY_H
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
@@ -7,17 +7,15 @@
 #include <ctime>
 #include <vector>
 
-class Object
+class Entity
 {
-public:
-    int HP;
+protected:
     sf::Sprite sprite;
-    bool destroy;
 
+    bool destroy;
 public:
-    Object(const sf::Texture &texture);
-    Object();
-    virtual ~Object() = default;
+    Entity(const sf::Texture &texture);
+    virtual ~Entity() = default;
 
     sf::FloatRect getBounds();
     sf::Vector2f getPosition();
@@ -25,13 +23,8 @@ public:
 
     virtual void animate(const float &elapsed)=0;
     virtual void update(const float &elapsed)=0;
-    virtual int mod_ID()=0;
-
-    int changeHP(int hp);    
     void del();
     void draw(sf::RenderTarget &render_target);
-    bool getDestroyed();
-    bool is_destroyed();
 };
 
-#endif // OBJECT_H
+#endif // ENTITY_H
